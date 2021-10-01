@@ -1,4 +1,4 @@
-package main
+package mapparser
 
 type Pos struct {
 	PosX int16
