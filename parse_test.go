@@ -45,6 +45,10 @@ func TestParse(t *testing.T) {
 		t.Error(err)
 	}
 
+	if mapblock.IsEmpty() {
+		t.Error("mapblock is empty")
+	}
+
 	if mapblock.Version != 28 {
 		t.Error("wrong mapblock version: " + strconv.Itoa(int(mapblock.Version)))
 	}
