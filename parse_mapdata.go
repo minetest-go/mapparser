@@ -5,7 +5,6 @@ import (
 	"compress/zlib"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"io"
 	"strconv"
 )
@@ -39,9 +38,7 @@ func parseMapdata(mapblock *MapBlock, data []byte) (int, error) {
 	}
 	mapblock.Mapdata = &mapd
 
-	fmt.Println(len(rawdata))
 	for i := 0; i < 4096; i++ {
-		fmt.Println(i)
 		mapd.ContentId[i] = int(binary.BigEndian.Uint16(rawdata[i*2:]))
 		mapd.Param1[i] = int(rawdata[(4096*2)+i])
 		mapd.Param2[i] = int(rawdata[(4096*3)+i])

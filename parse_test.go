@@ -49,6 +49,19 @@ func TestParse(t *testing.T) {
 	if pairs["owner"] != "pipo" {
 		t.Error(pairs["owner"])
 	}
+
+	if mapblock.GetNodeId(0, 0, 0) != 0 {
+		t.Error("nodeid mismatch")
+	}
+
+	if mapblock.GetNodeName(0, 0, 0) != "travelnet:travelnet" {
+		t.Error("nodename mismatch")
+	}
+
+	if mapblock.GetParam2(0, 0, 0) != 0 {
+		t.Error("param2 mismatch")
+	}
+
 }
 
 func TestParse2(t *testing.T) {
@@ -62,6 +75,10 @@ func TestParse2(t *testing.T) {
 
 	if err != nil {
 		t.Error(err)
+	}
+
+	if mapblock.IsEmpty() {
+		t.Error("mapblock empty")
 	}
 
 	for k, v := range mapblock.BlockMapping {
