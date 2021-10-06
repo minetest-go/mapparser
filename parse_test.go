@@ -81,8 +81,8 @@ func TestParse2(t *testing.T) {
 		t.Error("mapblock empty")
 	}
 
-	for k, v := range mapblock.BlockMapping {
-		fmt.Println("Key", k, "Value", v)
+	for id, name := range mapblock.BlockMapping {
+		fmt.Printf("%d = %s\n", id, name)
 	}
 }
 
