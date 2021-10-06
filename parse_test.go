@@ -121,5 +121,8 @@ func TestParseMetadata(t *testing.T) {
 	}
 
 	str, err := json.MarshalIndent(mb, "", "	")
+	if err != nil {
+		t.Error(err)
+	}
 	fmt.Println(string(str))
 }
