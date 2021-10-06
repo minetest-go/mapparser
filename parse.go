@@ -5,14 +5,12 @@ import (
 	"strconv"
 )
 
-func Parse(data []byte, mtime int64, pos *MapBlockCoords) (*MapBlock, error) {
+func Parse(data []byte) (*MapBlock, error) {
 	if len(data) == 0 {
 		return nil, errors.New("no data")
 	}
 
 	mapblock := NewMapblock()
-	mapblock.Mtime = mtime
-	mapblock.Pos = pos
 	mapblock.Size = len(data)
 
 	// version

@@ -39,7 +39,7 @@ func TestParse(t *testing.T) {
 		t.Error(err)
 	}
 
-	mapblock, err := Parse(data, 0, NewMapBlockCoords(0, 0, 0))
+	mapblock, err := Parse(data)
 
 	if err != nil {
 		t.Error(err)
@@ -82,7 +82,7 @@ func TestParse2(t *testing.T) {
 		t.Error(err)
 	}
 
-	mapblock, err := Parse(data, 0, NewMapBlockCoords(0, 0, 0))
+	mapblock, err := Parse(data)
 
 	if err != nil {
 		t.Error(err)
@@ -100,7 +100,7 @@ func TestParse3(t *testing.T) {
 		t.Error(err)
 	}
 
-	_, err = Parse(data, 0, NewMapBlockCoords(0, 0, 0))
+	_, err = Parse(data)
 
 	if err != nil {
 		t.Error(err)
@@ -114,7 +114,7 @@ func TestParseMetadata(t *testing.T) {
 		t.Error(err)
 	}
 
-	mb, err := Parse(data, 0, NewMapBlockCoords(0, 0, 0))
+	mb, err := Parse(data)
 
 	if err != nil {
 		t.Error(err)
