@@ -3,17 +3,12 @@ package mapparser
 import (
 	"errors"
 	"strconv"
-
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 func Parse(data []byte, mtime int64, pos *MapBlockCoords) (*MapBlock, error) {
 	if len(data) == 0 {
 		return nil, errors.New("no data")
 	}
-
-	timer := prometheus.NewTimer(parseDuration)
-	defer timer.ObserveDuration()
 
 	mapblock := NewMapblock()
 	mapblock.Mtime = mtime
@@ -107,6 +102,5 @@ func Parse(data []byte, mtime int64, pos *MapBlockCoords) (*MapBlock, error) {
 		mapblock.BlockMapping[nodeId] = blockName
 	}
 
-	parsedMapBlocks.Inc()
 	return mapblock, nil
 }
