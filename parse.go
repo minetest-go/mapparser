@@ -1,6 +1,7 @@
 package mapparser
 
 import (
+	"encoding/binary"
 	"errors"
 	"strconv"
 )
@@ -71,11 +72,11 @@ func Parse(data []byte) (*MapBlock, error) {
 	//static objects
 
 	offset++ //static objects version
-	staticObjectsCount := readU16(data, offset)
+	staticObjectsCount := int(binary.BigEndian.Uint16(data[offset:]))
 	offset += 2
 	for i := 0; i < staticObjectsCount; i++ {
 		offset += 13
-		dataSize := readU16(data, offset)
+		dataSize := int(binary.BigEndian.Uint16(data[offset:]))
 		offset += dataSize + 2
 	}
 
@@ -85,13 +86,13 @@ func Parse(data []byte) (*MapBlock, error) {
 	//mapping version
 	offset++
 
-	numMappings := readU16(data, offset)
+	numMappings := int(binary.BigEndian.Uint16(data[offset:]))
 	offset += 2
 	for i := 0; i < numMappings; i++ {
-		nodeId := readU16(data, offset)
+		nodeId := int(binary.BigEndian.Uint16(data[offset:]))
 		offset += 2
 
-		nameLen := readU16(data, offset)
+		nameLen := int(binary.BigEndian.Uint16(data[offset:]))
 		offset += 2
 
 		blockName := string(data[offset : offset+nameLen])

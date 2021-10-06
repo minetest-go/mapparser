@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"compress/zlib"
+	"encoding/binary"
 	"errors"
 	"io"
 	"strconv"
@@ -19,21 +20,6 @@ const (
 	INVENTORY_END        = "EndInventoryList"
 	INVENTORY_START      = "List"
 )
-
-func readU16(data []byte, offset int) int {
-	return (int(data[offset]) << 8) | int(data[offset+1])
-}
-
-func readU8(data []byte, offset int) int {
-	return int(data[offset])
-}
-
-func readU32(data []byte, offset int) int {
-	return int(data[offset])<<24 |
-		int(data[offset+1])<<16 |
-		int(data[offset+2])<<8 |
-		int(data[offset+3])
-}
 
 func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 	r := bytes.NewReader(data)
@@ -66,26 +52,26 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 	}
 
 	offset++
-	count := readU16(metadata, offset)
+	count := int(binary.BigEndian.Uint16(metadata[offset:]))
 
 	offset += 2
 
 	for i := 0; i < count; i++ {
-		position := readU16(metadata, offset)
+		position := int(binary.BigEndian.Uint16(metadata[offset:]))
 		pairsMap := mapblock.Metadata.GetPairsMap(position)
 
 		offset += 2
-		valuecount := readU32(metadata, offset)
+		valuecount := int(binary.BigEndian.Uint32(metadata[offset:]))
 
 		offset += 4
 		for j := 0; j < valuecount; j++ {
-			keyLength := readU16(metadata, offset)
+			keyLength := int(binary.BigEndian.Uint16(metadata[offset:]))
 			offset += 2
 
 			key := string(metadata[offset : keyLength+offset])
 			offset += keyLength
 
-			valueLength := readU32(metadata, offset)
+			valueLength := int(binary.BigEndian.Uint32(metadata[offset:]))
 			offset += 4
 
 			if len(metadata) <= valueLength+offset {
@@ -99,7 +85,6 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 			pairsMap[key] = value
 
 			if version >= 2 { /* private tag doesn't exist in version=1 */
-				readU8(metadata, offset)
 				offset++
 			}
 		}
