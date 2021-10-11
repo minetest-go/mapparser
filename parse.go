@@ -9,6 +9,13 @@ import (
 var ErrNoData = errors.New("no data")
 var ErrMapblockVersion = errors.New("mapblock version unsupported")
 
+type MapdataCompressionType int
+
+const (
+	MapdataZlibCompression MapdataCompressionType = 1
+	MapdataZstdCompression MapdataCompressionType = 2
+)
+
 func Parse(data []byte) (*MapBlock, error) {
 	if len(data) == 0 {
 		return nil, ErrNoData
@@ -20,7 +27,7 @@ func Parse(data []byte) (*MapBlock, error) {
 	// version
 	mapblock.Version = data[0]
 
-	if mapblock.Version < 25 || mapblock.Version > 28 {
+	if mapblock.Version < 25 || mapblock.Version > 29 {
 		return mapblock, ErrMapblockVersion
 	}
 
@@ -37,75 +44,58 @@ func Parse(data []byte) (*MapBlock, error) {
 		offset = 2
 	}
 
-	content_width := data[offset]
-	params_width := data[offset+1]
+	if mapblock.Version <= 28 {
+		// zlib compressed mapblock
 
-	if content_width != 2 {
-		return nil, errors.New("content_width = " + strconv.Itoa(int(content_width)))
-	}
+		content_width := data[offset]
+		params_width := data[offset+1]
 
-	if params_width != 2 {
-		return nil, errors.New("params_width = " + strconv.Itoa(int(params_width)))
-	}
-
-	//mapdata (blocks)
-	if mapblock.Version >= 27 {
-		offset = 6
-
-	} else {
-		offset = 4
-
-	}
-
-	//metadata
-	count, err := parseMapdata(mapblock, data[offset:])
-	if err != nil {
-		return nil, err
-	}
-
-	offset += count
-
-	count, err = parseMetadata(mapblock, data[offset:])
-	if err != nil {
-		return nil, err
-	}
-
-	offset += count
-
-	//static objects
-
-	offset++ //static objects version
-	staticObjectsCount := int(binary.BigEndian.Uint16(data[offset:]))
-	offset += 2
-	for i := 0; i < staticObjectsCount; i++ {
-		offset += 13
-		dataSize := int(binary.BigEndian.Uint16(data[offset:]))
-		offset += dataSize + 2
-	}
-
-	//timestamp
-	offset += 4
-
-	//mapping version
-	offset++
-
-	if len(data) > (offset + 2) {
-		// disk-data has per-block mapping, network-data has a global mapping
-		numMappings := int(binary.BigEndian.Uint16(data[offset:]))
-		offset += 2
-		for i := 0; i < numMappings; i++ {
-			nodeId := int(binary.BigEndian.Uint16(data[offset:]))
-			offset += 2
-
-			nameLen := int(binary.BigEndian.Uint16(data[offset:]))
-			offset += 2
-
-			blockName := string(data[offset : offset+nameLen])
-			offset += nameLen
-
-			mapblock.BlockMapping[nodeId] = blockName
+		if content_width != 2 {
+			return nil, errors.New("content_width = " + strconv.Itoa(int(content_width)))
 		}
+
+		if params_width != 2 {
+			return nil, errors.New("params_width = " + strconv.Itoa(int(params_width)))
+		}
+
+		//mapdata (blocks)
+		if mapblock.Version >= 27 {
+			offset = 6
+		} else {
+			offset = 4
+		}
+
+		//metadata
+		err := parseMapdata(data[offset:], &offset, mapblock, MapdataZlibCompression)
+		if err != nil {
+			return nil, err
+		}
+
+		// metadata
+		err = parseMetadata(data[offset:], &offset, mapblock)
+		if err != nil {
+			return nil, err
+		}
+
+		//static objects
+		parseStaticObjects(data, &offset)
+
+		//timestamp
+		offset += 4
+
+		//mapping version
+		offset++
+		parseBlockMapping(data, &offset, mapblock)
+
+		return mapblock, nil
 	}
 
-	return mapblock, nil
+	if mapblock.Version >= 29 {
+		mapblock.Timestamp = binary.BigEndian.Uint32(data[offset:])
+		offset += 4
+
+		return mapblock, nil
+	}
+
+	return nil, nil
 }

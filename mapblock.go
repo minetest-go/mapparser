@@ -4,6 +4,7 @@ type MapBlock struct {
 	Size         int            `json:"size"`
 	Version      byte           `json:"version"`
 	Underground  bool           `json:"underground"`
+	Timestamp    uint32         `json:"timestamp"`
 	Mapdata      *MapData       `json:"mapdata"`
 	Metadata     *Metadata      `json:"metadata"`
 	BlockMapping map[int]string `json:"blockmapping"`

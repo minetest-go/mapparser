@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func parseMapdata(mapblock *MapBlock, data []byte) (int, error) {
+func parseMapdata(data []byte, offset *int, mapblock *MapBlock, compression_type MapdataCompressionType) error {
 	r := bytes.NewReader(data)
 
 	cr := new(CountedReader)
@@ -17,7 +17,7 @@ func parseMapdata(mapblock *MapBlock, data []byte) (int, error) {
 
 	z, err := zlib.NewReader(cr)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	defer z.Close()
@@ -26,7 +26,7 @@ func parseMapdata(mapblock *MapBlock, data []byte) (int, error) {
 	io.Copy(buf, z)
 
 	if buf.Len() != 16384 {
-		return 0, errors.New("Mapdata length invalid: " + strconv.Itoa(buf.Len()))
+		return errors.New("Mapdata length invalid: " + strconv.Itoa(buf.Len()))
 	}
 
 	rawdata := buf.Bytes()
@@ -44,5 +44,7 @@ func parseMapdata(mapblock *MapBlock, data []byte) (int, error) {
 		mapd.Param2[i] = int(rawdata[(4096*3)+i])
 	}
 
-	return cr.Count, nil
+	*offset += cr.Count
+
+	return nil
 }

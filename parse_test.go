@@ -85,6 +85,7 @@ func TestParseError2(t *testing.T) {
 
 	if data == nil {
 		t.Error("data is not set")
+		return
 	}
 
 	if data.Version != 24 {
@@ -98,6 +99,28 @@ func TestParseError2(t *testing.T) {
 	if err != ErrMapblockVersion {
 		t.Error("wrong error")
 	}
+}
+
+func TestParseZstd(t *testing.T) {
+
+	data, err := ioutil.ReadFile("testdata/zstd-block.bin")
+	if err != nil {
+		t.Error(err)
+	}
+
+	mapblock, err := Parse(data)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(mapblock)
+
+	if mapblock == nil {
+		t.Error("no data")
+	}
+
+	//t.Error()
 }
 
 func TestParse2(t *testing.T) {

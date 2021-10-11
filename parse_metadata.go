@@ -21,7 +21,7 @@ const (
 	INVENTORY_START      = "List"
 )
 
-func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
+func parseMetadata(data []byte, global_offset *int, mapblock *MapBlock) error {
 	r := bytes.NewReader(data)
 
 	cr := new(CountedReader)
@@ -29,7 +29,7 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 
 	z, err := zlib.NewReader(cr)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	defer z.Close()
@@ -38,7 +38,7 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 	io.Copy(buf, z)
 
 	if cr.Count == 0 {
-		return 0, ErrNoData
+		return ErrNoData
 	}
 
 	metadata := buf.Bytes()
@@ -48,7 +48,8 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 
 	if version == 0 {
 		//No data?
-		return cr.Count, nil
+		*global_offset += cr.Count
+		return nil
 	}
 
 	offset++
@@ -75,7 +76,7 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 			offset += 4
 
 			if len(metadata) <= valueLength+offset {
-				return 0, errors.New("metadata too short: " + strconv.Itoa(len(metadata)) +
+				return errors.New("metadata too short: " + strconv.Itoa(len(metadata)) +
 					", valuelength: " + strconv.Itoa(int(valueLength)))
 			}
 
@@ -119,7 +120,7 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 					if len(parts) >= 3 {
 						val, err := strconv.ParseInt(parts[2], 10, 32)
 						if err != nil {
-							return 0, err
+							return err
 						}
 						item.Count = int(val)
 					}
@@ -127,7 +128,7 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 					if len(parts) >= 4 {
 						val, err := strconv.ParseInt(parts[3], 10, 32)
 						if err != nil {
-							return 0, err
+							return err
 						}
 						item.Count = int(val)
 					}
@@ -141,7 +142,7 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 				break
 
 			} else {
-				return 0, errors.New("Malformed inventory: " + txt)
+				return errors.New("Malformed inventory: " + txt)
 			}
 		}
 
@@ -149,5 +150,7 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 
 	}
 
-	return cr.Count, nil
+	*global_offset += cr.Count
+
+	return nil
 }
