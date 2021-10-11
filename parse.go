@@ -6,9 +6,12 @@ import (
 	"strconv"
 )
 
+var ErrNoData = errors.New("no data")
+var ErrMapblockVersion = errors.New("mapblock version unsupported")
+
 func Parse(data []byte) (*MapBlock, error) {
 	if len(data) == 0 {
-		return nil, errors.New("no data")
+		return nil, ErrNoData
 	}
 
 	mapblock := NewMapblock()
@@ -18,7 +21,7 @@ func Parse(data []byte) (*MapBlock, error) {
 	mapblock.Version = data[0]
 
 	if mapblock.Version < 25 || mapblock.Version > 28 {
-		return nil, errors.New("mapblock-version not supported: " + strconv.Itoa(int(mapblock.Version)))
+		return mapblock, ErrMapblockVersion
 	}
 
 	//flags

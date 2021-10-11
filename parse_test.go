@@ -64,6 +64,42 @@ func TestParse(t *testing.T) {
 
 }
 
+func TestParseError(t *testing.T) {
+	data, err := Parse([]byte{})
+
+	if data != nil {
+		t.Error("data is set")
+	}
+
+	if err == nil {
+		t.Error("error expected")
+	}
+
+	if err != ErrNoData {
+		t.Error("wrong error")
+	}
+}
+
+func TestParseError2(t *testing.T) {
+	data, err := Parse([]byte{24})
+
+	if data == nil {
+		t.Error("data is not set")
+	}
+
+	if data.Version != 24 {
+		t.Error("mapblock version wrong")
+	}
+
+	if err == nil {
+		t.Error("error expected")
+	}
+
+	if err != ErrMapblockVersion {
+		t.Error("wrong error")
+	}
+}
+
 func TestParse2(t *testing.T) {
 
 	data, err := ioutil.ReadFile("testdata/11.0.2")

@@ -38,7 +38,7 @@ func parseMetadata(mapblock *MapBlock, data []byte) (int, error) {
 	io.Copy(buf, z)
 
 	if cr.Count == 0 {
-		return 0, errors.New("no data")
+		return 0, ErrNoData
 	}
 
 	metadata := buf.Bytes()
