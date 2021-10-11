@@ -101,13 +101,35 @@ func TestParse3(t *testing.T) {
 }
 
 func TestParseMetadata(t *testing.T) {
-
 	data, err := ioutil.ReadFile("testdata/mb-with-metadata.bin")
 	if err != nil {
 		t.Error(err)
 	}
 
 	mb, err := Parse(data)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	str, err := json.MarshalIndent(mb, "", "	")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(string(str))
+}
+
+func TestParseNetworkBlock(t *testing.T) {
+	data, err := ioutil.ReadFile("testdata/network-blockdata.bin")
+	if err != nil {
+		t.Error(err)
+	}
+
+	offsetData := make([]byte, len(data)+1)
+	offsetData[0] = 28
+	copy(offsetData[1:], data)
+
+	mb, err := Parse(offsetData)
 
 	if err != nil {
 		t.Error(err)
