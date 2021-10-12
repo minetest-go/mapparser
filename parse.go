@@ -9,13 +9,6 @@ import (
 var ErrNoData = errors.New("no data")
 var ErrMapblockVersion = errors.New("mapblock version unsupported")
 
-type MapdataCompressionType int
-
-const (
-	MapdataZlibCompression MapdataCompressionType = 1
-	MapdataZstdCompression MapdataCompressionType = 2
-)
-
 func Parse(data []byte) (*MapBlock, error) {
 	if len(data) == 0 {
 		return nil, ErrNoData
