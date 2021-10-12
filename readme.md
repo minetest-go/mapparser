@@ -7,12 +7,8 @@ Minetest map parser library for go
 # Features
 
 * Extracts metadata/inventories
-* NodeID/Param2 handling
+* NodeID/Param1/Param2 handling
 * Supports zlib compressed mapblocks
-
-# Unsupported
-(PR's welcome)
-
 * zstd compressed mapblocks (minetest 5.5+)
 
 # Example

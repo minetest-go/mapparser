@@ -31,21 +31,21 @@ func Parse(data []byte) (*MapBlock, error) {
 		return mapblock, ErrMapblockVersion
 	}
 
-	//flags
-	flags := data[1]
-	mapblock.Underground = (flags & 0x01) == 0x01
-
-	var offset int
-
-	if mapblock.Version >= 27 {
-		offset = 4
-	} else {
-		//u16 lighting_complete not present
-		offset = 2
-	}
-
 	if mapblock.Version <= 28 {
 		// zlib compressed mapblock
+
+		//flags
+		flags := data[1]
+		mapblock.Underground = (flags & 0x01) == 0x01
+
+		var offset int
+
+		if mapblock.Version >= 27 {
+			offset = 4
+		} else {
+			//u16 lighting_complete not present
+			offset = 2
+		}
 
 		content_width := data[offset]
 		params_width := data[offset+1]
@@ -58,24 +58,34 @@ func Parse(data []byte) (*MapBlock, error) {
 			return nil, errors.New("params_width = " + strconv.Itoa(int(params_width)))
 		}
 
-		//mapdata (blocks)
+		// mapdata offset
 		if mapblock.Version >= 27 {
 			offset = 6
 		} else {
 			offset = 4
 		}
 
-		//metadata
-		err := parseMapdata(data[offset:], &offset, mapblock, MapdataZlibCompression)
+		// mapdata
+		mapdata, skip_bytes, err := decompress_zlib(data[offset:])
 		if err != nil {
 			return nil, err
 		}
+		err = parseMapdata(mapdata, mapblock)
+		if err != nil {
+			return nil, err
+		}
+		offset += skip_bytes
 
 		// metadata
-		err = parseMetadata(data[offset:], &offset, mapblock)
+		metadata, skip_bytes, err := decompress_zlib(data[offset:])
 		if err != nil {
 			return nil, err
 		}
+		err = parseMetadata(metadata, mapblock)
+		if err != nil {
+			return nil, err
+		}
+		offset += skip_bytes
 
 		//static objects
 		parseStaticObjects(data, &offset)
@@ -91,9 +101,43 @@ func Parse(data []byte) (*MapBlock, error) {
 	}
 
 	if mapblock.Version >= 29 {
-		mapblock.Timestamp = binary.BigEndian.Uint32(data[offset:])
+		uncompressed_data, _, err := decompress_zstd(data[1:])
+		if err != nil {
+			return nil, err
+		}
+
+		offset := 0
+
+		//flags
+		flags := uncompressed_data[1]
+		mapblock.Underground = (flags & 0x01) == 0x01
+		offset++
+
+		//lighting complete
+		offset += 2
+
+		mapblock.Timestamp = binary.BigEndian.Uint32(uncompressed_data[offset:])
 		offset += 4
 
+		//mapping version
+		offset++
+		parseBlockMapping(uncompressed_data, &offset, mapblock)
+
+		// content width * 2
+		offset += 2
+
+		// mapdata
+		err = parseMapdata(uncompressed_data[offset:], mapblock)
+		if err != nil {
+			return nil, err
+		}
+		offset += MapDataSize
+
+		// metadata
+		err = parseMetadata(uncompressed_data[offset:], mapblock)
+		if err != nil {
+			return nil, err
+		}
 		return mapblock, nil
 	}
 

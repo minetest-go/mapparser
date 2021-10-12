@@ -3,10 +3,8 @@ package mapparser
 import (
 	"bufio"
 	"bytes"
-	"compress/zlib"
 	"encoding/binary"
 	"errors"
-	"io"
 	"strconv"
 	"strings"
 )
@@ -21,34 +19,12 @@ const (
 	INVENTORY_START      = "List"
 )
 
-func parseMetadata(data []byte, global_offset *int, mapblock *MapBlock) error {
-	r := bytes.NewReader(data)
-
-	cr := new(CountedReader)
-	cr.Reader = r
-
-	z, err := zlib.NewReader(cr)
-	if err != nil {
-		return err
-	}
-
-	defer z.Close()
-
-	buf := new(bytes.Buffer)
-	io.Copy(buf, z)
-
-	if cr.Count == 0 {
-		return ErrNoData
-	}
-
-	metadata := buf.Bytes()
-
+func parseMetadata(metadata []byte, mapblock *MapBlock) error {
 	offset := 0
 	version := metadata[offset]
 
 	if version == 0 {
 		//No data?
-		*global_offset += cr.Count
 		return nil
 	}
 
@@ -149,8 +125,6 @@ func parseMetadata(data []byte, global_offset *int, mapblock *MapBlock) error {
 		//TODO
 
 	}
-
-	*global_offset += cr.Count
 
 	return nil
 }

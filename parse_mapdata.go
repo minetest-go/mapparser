@@ -1,35 +1,16 @@
 package mapparser
 
 import (
-	"bytes"
-	"compress/zlib"
 	"encoding/binary"
-	"errors"
-	"io"
-	"strconv"
+	"fmt"
 )
 
-func parseMapdata(data []byte, offset *int, mapblock *MapBlock, compression_type MapdataCompressionType) error {
-	r := bytes.NewReader(data)
+const MapDataSize = 16384
 
-	cr := new(CountedReader)
-	cr.Reader = r
-
-	z, err := zlib.NewReader(cr)
-	if err != nil {
-		return err
+func parseMapdata(rawdata []byte, mapblock *MapBlock) error {
+	if len(rawdata) < MapDataSize {
+		return fmt.Errorf("mapdata length invalid: %d", len(rawdata))
 	}
-
-	defer z.Close()
-
-	buf := new(bytes.Buffer)
-	io.Copy(buf, z)
-
-	if buf.Len() != 16384 {
-		return errors.New("Mapdata length invalid: " + strconv.Itoa(buf.Len()))
-	}
-
-	rawdata := buf.Bytes()
 
 	mapd := MapData{
 		ContentId: make([]int, 4096),
@@ -43,8 +24,6 @@ func parseMapdata(data []byte, offset *int, mapblock *MapBlock, compression_type
 		mapd.Param1[i] = int(rawdata[(4096*2)+i])
 		mapd.Param2[i] = int(rawdata[(4096*3)+i])
 	}
-
-	*offset += cr.Count
 
 	return nil
 }

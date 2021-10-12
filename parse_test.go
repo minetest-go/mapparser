@@ -8,6 +8,61 @@ import (
 	"testing"
 )
 
+func validateMapblock(t *testing.T, mapblock *MapBlock) {
+	if mapblock == nil {
+		t.Error("no data")
+		return
+	}
+
+	if mapblock.Mapdata == nil {
+		t.Error("mapdata is nil")
+		return
+	}
+
+	if mapblock.Mapdata.ContentId == nil {
+		t.Error("contentid is nil")
+		return
+	}
+
+	if mapblock.Mapdata.Param1 == nil {
+		t.Error("param1 is nil")
+		return
+	}
+
+	if mapblock.Mapdata.Param2 == nil {
+		t.Error("param2 is nil")
+		return
+	}
+
+	if len(mapblock.Mapdata.ContentId) != 4096 {
+		t.Error("invalid contentid size")
+	}
+
+	if len(mapblock.Mapdata.Param1) != 4096 {
+		t.Error("invalid param1 size")
+	}
+
+	if len(mapblock.Mapdata.Param2) != 4096 {
+		t.Error("invalid param2 size")
+	}
+
+	for _, nodeid := range mapblock.Mapdata.ContentId {
+		nodename := mapblock.BlockMapping[nodeid]
+		if nodename == "" {
+			t.Error(fmt.Sprintf("Nodename not found for id: %d", nodeid))
+		}
+	}
+
+	/*
+		for i, param1 := range mapblock.Mapdata.Param1 {
+			if param1 > 15 {
+				t.Error(fmt.Sprintf("Invalid param1: %d @ %d", param1, i))
+			}
+		}
+	*/
+
+}
+
 func TestParse(t *testing.T) {
 
 	data, err := ioutil.ReadFile("testdata/0.0.0")
@@ -16,6 +71,8 @@ func TestParse(t *testing.T) {
 	}
 
 	mapblock, err := Parse(data)
+
+	validateMapblock(t, mapblock)
 
 	if err != nil {
 		t.Error(err)
@@ -116,11 +173,7 @@ func TestParseZstd(t *testing.T) {
 
 	fmt.Println(mapblock)
 
-	if mapblock == nil {
-		t.Error("no data")
-	}
-
-	//t.Error()
+	validateMapblock(t, mapblock)
 }
 
 func TestParse2(t *testing.T) {
@@ -135,6 +188,8 @@ func TestParse2(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	validateMapblock(t, mapblock)
 
 	if mapblock.IsEmpty() {
 		t.Error("mapblock empty")
@@ -152,11 +207,13 @@ func TestParse3(t *testing.T) {
 		t.Error(err)
 	}
 
-	_, err = Parse(data)
+	mapblock, err := Parse(data)
 
 	if err != nil {
 		t.Error(err)
 	}
+
+	validateMapblock(t, mapblock)
 }
 
 func TestParseMetadata(t *testing.T) {
