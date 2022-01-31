@@ -37,12 +37,12 @@ func (mb *MapBlock) IsEmpty() bool {
 }
 
 func (mb *MapBlock) GetNodeId(x, y, z int) int {
-	pos := getNodePos(x, y, z)
+	pos := GetNodePos(x, y, z)
 	return mb.Mapdata.ContentId[pos]
 }
 
 func (mb *MapBlock) GetParam2(x, y, z int) int {
-	pos := getNodePos(x, y, z)
+	pos := GetNodePos(x, y, z)
 	return mb.Mapdata.Param2[pos]
 }
 

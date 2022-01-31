@@ -6,9 +6,9 @@ import (
 )
 
 func TestToNodePos(t *testing.T) {
-	pos := getNodePos(5, 8, 12)
+	pos := GetNodePos(5, 8, 12)
 
-	x, y, z := fromNodePos(pos)
+	x, y, z := FromNodePos(pos)
 	fmt.Println(pos)
 
 	if x != 5 {

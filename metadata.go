@@ -13,7 +13,7 @@ func NewMetadata() *Metadata {
 }
 
 func (md *Metadata) GetMetadata(x, y, z int) map[string]string {
-	return md.GetPairsMap(getNodePos(x, y, z))
+	return md.GetPairsMap(GetNodePos(x, y, z))
 }
 
 func (md *Metadata) GetPairsMap(pos int) map[string]string {
@@ -37,7 +37,7 @@ func (md *Metadata) GetInventoryMap(pos int) map[string]*Inventory {
 }
 
 func (md *Metadata) GetInventoryMapAtPos(x, y, z int) map[string]*Inventory {
-	return md.GetInventoryMap(getNodePos(x, y, z))
+	return md.GetInventoryMap(GetNodePos(x, y, z))
 }
 
 func (md *Metadata) GetInventory(pos int, name string) *Inventory {
