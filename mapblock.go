@@ -17,23 +17,9 @@ func NewMapblock() *MapBlock {
 	return &mb
 }
 
+// returns true if the mapblock is empty (air-only)
 func (mb *MapBlock) IsEmpty() bool {
-	if len(mb.BlockMapping) == 0 {
-		// only air
-		return true
-	}
-
-	if len(mb.BlockMapping) == 1 {
-		for _, name := range mb.BlockMapping {
-			if name == "vacuum:vacuum" {
-				// only vacuum
-				return true
-			}
-		}
-	}
-
-	// other stuff
-	return false
+	return len(mb.BlockMapping) == 0
 }
 
 func (mb *MapBlock) GetNodeId(x, y, z int) int {
