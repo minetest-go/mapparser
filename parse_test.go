@@ -119,6 +119,12 @@ func TestParse(t *testing.T) {
 		t.Error("param2 mismatch")
 	}
 
+	json, err := json.Marshal(mapblock)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(string(json))
 }
 
 func TestParseError(t *testing.T) {
