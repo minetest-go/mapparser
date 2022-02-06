@@ -52,3 +52,7 @@ for key, value := range md {
     fmt.Printf("%s = %s", key, value)
 }
 ```
+
+# License
+
+Code: **MIT**
