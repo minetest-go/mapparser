@@ -1,8 +1,12 @@
 package mapparser
 
-import "encoding/binary"
+import (
+	"encoding/binary"
 
-func parseBlockMapping(data []byte, offset *int, mapblock *MapBlock) {
+	"github.com/minetest-go/types"
+)
+
+func parseBlockMapping(data []byte, offset *int, mapblock *types.MapBlock) {
 	if len(data) > (*offset + 2) {
 		// disk-data has per-block mapping, network-data has a global mapping
 		numMappings := int(binary.BigEndian.Uint16(data[*offset:]))

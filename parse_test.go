@@ -6,9 +6,11 @@ import (
 	"io/ioutil"
 	"strconv"
 	"testing"
+
+	"github.com/minetest-go/types"
 )
 
-func validateMapblock(t *testing.T, mapblock *MapBlock) {
+func validateMapblock(t *testing.T, mapblock *types.MapBlock) {
 	if mapblock == nil {
 		t.Error("no data")
 		return
@@ -49,7 +51,7 @@ func validateMapblock(t *testing.T, mapblock *MapBlock) {
 	for _, nodeid := range mapblock.Mapdata.ContentId {
 		nodename := mapblock.BlockMapping[nodeid]
 		if nodename == "" {
-			t.Error(fmt.Sprintf("Nodename not found for id: %d", nodeid))
+			t.Errorf("Nodename not found for id: %d", nodeid)
 		}
 	}
 
@@ -107,15 +109,15 @@ func TestParse(t *testing.T) {
 		t.Error(pairs["owner"])
 	}
 
-	if mapblock.GetNodeId(0, 0, 0) != 0 {
+	if mapblock.GetNodeId(types.NewPos(0, 0, 0)) != 0 {
 		t.Error("nodeid mismatch")
 	}
 
-	if mapblock.GetNodeName(0, 0, 0) != "travelnet:travelnet" {
+	if mapblock.GetNodeName(types.NewPos(0, 0, 0)) != "travelnet:travelnet" {
 		t.Error("nodename mismatch")
 	}
 
-	if mapblock.GetParam2(0, 0, 0) != 0 {
+	if mapblock.GetParam2(types.NewPos(0, 0, 0)) != 0 {
 		t.Error("param2 mismatch")
 	}
 

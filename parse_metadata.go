@@ -7,6 +7,8 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+
+	"github.com/minetest-go/types"
 )
 
 /*
@@ -19,7 +21,7 @@ const (
 	INVENTORY_START      = "List"
 )
 
-func parseMetadata(metadata []byte, mapblock *MapBlock) error {
+func parseMetadata(metadata []byte, mapblock *types.MapBlock) error {
 	offset := 0
 	version := metadata[offset]
 
@@ -67,7 +69,7 @@ func parseMetadata(metadata []byte, mapblock *MapBlock) error {
 		}
 
 		var currentInventoryName *string
-		var currentInventory *Inventory
+		var currentInventory *types.Inventory
 
 		scanner := bufio.NewScanner(bytes.NewReader(metadata[offset:]))
 		for scanner.Scan() {
@@ -86,7 +88,7 @@ func parseMetadata(metadata []byte, mapblock *MapBlock) error {
 			} else if currentInventory != nil {
 				//content
 				if strings.HasPrefix(txt, "Item") {
-					item := Item{}
+					item := types.Item{}
 					parts := strings.Split(txt, " ")
 
 					if len(parts) >= 2 {

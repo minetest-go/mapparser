@@ -4,17 +4,19 @@ import (
 	"encoding/binary"
 	"errors"
 	"strconv"
+
+	"github.com/minetest-go/types"
 )
 
 var ErrNoData = errors.New("no data")
 var ErrMapblockVersion = errors.New("mapblock version unsupported")
 
-func Parse(data []byte) (*MapBlock, error) {
+func Parse(data []byte) (*types.MapBlock, error) {
 	if len(data) == 0 {
 		return nil, ErrNoData
 	}
 
-	mapblock := NewMapblock()
+	mapblock := types.NewMapblock()
 	mapblock.Size = len(data)
 
 	// version

@@ -3,16 +3,18 @@ package mapparser
 import (
 	"encoding/binary"
 	"fmt"
+
+	"github.com/minetest-go/types"
 )
 
 const MapDataSize = 16384
 
-func parseMapdata(rawdata []byte, mapblock *MapBlock) error {
+func parseMapdata(rawdata []byte, mapblock *types.MapBlock) error {
 	if len(rawdata) < MapDataSize {
 		return fmt.Errorf("mapdata length invalid: %d", len(rawdata))
 	}
 
-	mapd := MapData{
+	mapd := types.MapData{
 		ContentId: make([]int, 4096),
 		Param1:    make([]int, 4096),
 		Param2:    make([]int, 4096),
