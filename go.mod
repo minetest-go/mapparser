@@ -4,4 +4,4 @@ go 1.22.4
 
 require github.com/klauspost/compress v1.16.0
 
-require github.com/minetest-go/types v1.0.2
+require github.com/minetest-go/types v1.0.3
