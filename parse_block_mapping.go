@@ -22,6 +22,11 @@ func parseBlockMapping(data []byte, offset *int, mapblock *types.MapBlock) {
 			*offset += nameLen
 
 			mapblock.BlockMapping[nodeId] = blockName
+
+			if numMappings == 1 && blockName == "air" {
+				// mark as air-only
+				mapblock.AirOnly = true
+			}
 		}
 	}
 }
