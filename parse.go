@@ -11,6 +11,13 @@ import (
 var ErrNoData = errors.New("no data")
 var ErrMapblockVersion = errors.New("mapblock version unsupported")
 
+func ParseNetwork(ser_ver uint8, data []byte) (*types.MapBlock, error) {
+	offsetData := make([]byte, len(data)+1)
+	offsetData[0] = ser_ver
+	copy(offsetData[1:], data)
+	return Parse(offsetData)
+}
+
 func Parse(data []byte) (*types.MapBlock, error) {
 	if len(data) == 0 {
 		return nil, ErrNoData

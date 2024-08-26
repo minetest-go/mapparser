@@ -249,11 +249,7 @@ func TestParseNetworkBlock(t *testing.T) {
 		t.Error(err)
 	}
 
-	offsetData := make([]byte, len(data)+1)
-	offsetData[0] = 28
-	copy(offsetData[1:], data)
-
-	mb, err := Parse(offsetData)
+	mb, err := ParseNetwork(28, data)
 
 	if err != nil {
 		t.Error(err)
