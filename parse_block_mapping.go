@@ -7,6 +7,11 @@ import (
 )
 
 func parseBlockMapping(data []byte, offset *int, mapblock *types.MapBlock) {
+	if *offset >= len(data) {
+		// eof
+		return
+	}
+
 	if len(data) > (*offset + 2) {
 		// disk-data has per-block mapping, network-data has a global mapping
 		numMappings := int(binary.BigEndian.Uint16(data[*offset:]))

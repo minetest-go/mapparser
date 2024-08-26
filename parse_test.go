@@ -3,7 +3,7 @@ package mapparser
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"testing"
 
@@ -67,7 +67,7 @@ func validateMapblock(t *testing.T, mapblock *types.MapBlock) {
 
 func TestParse(t *testing.T) {
 
-	data, err := ioutil.ReadFile("testdata/0.0.0")
+	data, err := os.ReadFile("testdata/0.0.0")
 	if err != nil {
 		t.Error(err)
 	}
@@ -168,7 +168,7 @@ func TestParseError2(t *testing.T) {
 
 func TestParseZstd(t *testing.T) {
 
-	data, err := ioutil.ReadFile("testdata/zstd-block.bin")
+	data, err := os.ReadFile("testdata/zstd-block.bin")
 	if err != nil {
 		t.Error(err)
 	}
@@ -186,7 +186,7 @@ func TestParseZstd(t *testing.T) {
 
 func TestParse2(t *testing.T) {
 
-	data, err := ioutil.ReadFile("testdata/11.0.2")
+	data, err := os.ReadFile("testdata/11.0.2")
 	if err != nil {
 		t.Error(err)
 	}
@@ -210,7 +210,7 @@ func TestParse2(t *testing.T) {
 
 func TestParse3(t *testing.T) {
 
-	data, err := ioutil.ReadFile("testdata/0.1.0")
+	data, err := os.ReadFile("testdata/0.1.0")
 	if err != nil {
 		t.Error(err)
 	}
@@ -225,7 +225,7 @@ func TestParse3(t *testing.T) {
 }
 
 func TestParseMetadata(t *testing.T) {
-	data, err := ioutil.ReadFile("testdata/mb-with-metadata.bin")
+	data, err := os.ReadFile("testdata/mb-with-metadata.bin")
 	if err != nil {
 		t.Error(err)
 	}
@@ -244,7 +244,7 @@ func TestParseMetadata(t *testing.T) {
 }
 
 func TestParseNetworkBlock(t *testing.T) {
-	data, err := ioutil.ReadFile("testdata/network-blockdata.bin")
+	data, err := os.ReadFile("testdata/network-blockdata.bin")
 	if err != nil {
 		t.Error(err)
 	}
@@ -254,6 +254,25 @@ func TestParseNetworkBlock(t *testing.T) {
 	copy(offsetData[1:], data)
 
 	mb, err := Parse(offsetData)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	str, err := json.MarshalIndent(mb, "", "	")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(string(str))
+}
+
+func TestParseNetworkBlock2(t *testing.T) {
+	data, err := os.ReadFile("testdata/mapblock3516192727.bin")
+	if err != nil {
+		t.Error(err)
+	}
+
+	mb, err := Parse(data)
 
 	if err != nil {
 		t.Error(err)

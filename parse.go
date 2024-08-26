@@ -3,7 +3,7 @@ package mapparser
 import (
 	"encoding/binary"
 	"errors"
-	"strconv"
+	"fmt"
 
 	"github.com/minetest-go/types"
 )
@@ -46,11 +46,11 @@ func Parse(data []byte) (*types.MapBlock, error) {
 		params_width := data[offset+1]
 
 		if content_width != 2 {
-			return nil, errors.New("content_width = " + strconv.Itoa(int(content_width)))
+			return nil, fmt.Errorf("content_width unexpected: %d", content_width)
 		}
 
 		if params_width != 2 {
-			return nil, errors.New("params_width = " + strconv.Itoa(int(params_width)))
+			return nil, fmt.Errorf("params_width unexpected: %d", params_width)
 		}
 
 		// mapdata offset

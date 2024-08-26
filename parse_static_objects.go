@@ -4,6 +4,12 @@ import "encoding/binary"
 
 func parseStaticObjects(data []byte, offset *int) {
 	*offset++ //static objects version
+
+	if *offset >= len(data) {
+		// eof
+		return
+	}
+
 	staticObjectsCount := int(binary.BigEndian.Uint16(data[*offset:]))
 	*offset += 2
 	for i := 0; i < staticObjectsCount; i++ {
