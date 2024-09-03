@@ -16,39 +16,34 @@ func validateMapblock(t *testing.T, mapblock *types.MapBlock) {
 		return
 	}
 
-	if mapblock.Mapdata == nil {
-		t.Error("mapdata is nil")
-		return
-	}
-
-	if mapblock.Mapdata.ContentId == nil {
+	if mapblock.ContentId == nil {
 		t.Error("contentid is nil")
 		return
 	}
 
-	if mapblock.Mapdata.Param1 == nil {
+	if mapblock.Param1 == nil {
 		t.Error("param1 is nil")
 		return
 	}
 
-	if mapblock.Mapdata.Param2 == nil {
+	if mapblock.Param2 == nil {
 		t.Error("param2 is nil")
 		return
 	}
 
-	if len(mapblock.Mapdata.ContentId) != 4096 {
+	if len(mapblock.ContentId) != 4096 {
 		t.Error("invalid contentid size")
 	}
 
-	if len(mapblock.Mapdata.Param1) != 4096 {
+	if len(mapblock.Param1) != 4096 {
 		t.Error("invalid param1 size")
 	}
 
-	if len(mapblock.Mapdata.Param2) != 4096 {
+	if len(mapblock.Param2) != 4096 {
 		t.Error("invalid param2 size")
 	}
 
-	for _, nodeid := range mapblock.Mapdata.ContentId {
+	for _, nodeid := range mapblock.ContentId {
 		nodename := mapblock.BlockMapping[nodeid]
 		if nodename == "" {
 			t.Errorf("Nodename not found for id: %d", nodeid)
@@ -92,19 +87,19 @@ func TestParse(t *testing.T) {
 		t.Error("Underground flag")
 	}
 
-	if len(mapblock.Mapdata.ContentId) != 4096 {
+	if len(mapblock.ContentId) != 4096 {
 		t.Error("Mapdata length wrong")
 	}
 
-	if len(mapblock.Mapdata.Param2) != 4096 {
+	if len(mapblock.Param2) != 4096 {
 		t.Error("Mapdata length wrong")
 	}
 
-	if len(mapblock.Mapdata.Param1) != 4096 {
+	if len(mapblock.Param1) != 4096 {
 		t.Error("Mapdata length wrong")
 	}
 
-	pairs := mapblock.Metadata.GetPairsMap(0)
+	pairs := mapblock.Fields[0]
 	if pairs["owner"] != "pipo" {
 		t.Error(pairs["owner"])
 	}

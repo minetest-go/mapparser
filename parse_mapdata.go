@@ -14,17 +14,14 @@ func parseMapdata(rawdata []byte, mapblock *types.MapBlock) error {
 		return fmt.Errorf("mapdata length invalid: %d", len(rawdata))
 	}
 
-	mapd := types.MapData{
-		ContentId: make([]int, 4096),
-		Param1:    make([]int, 4096),
-		Param2:    make([]int, 4096),
-	}
-	mapblock.Mapdata = &mapd
+	mapblock.ContentId = make([]int, 4096)
+	mapblock.Param1 = make([]int, 4096)
+	mapblock.Param2 = make([]int, 4096)
 
 	for i := 0; i < 4096; i++ {
-		mapd.ContentId[i] = int(binary.BigEndian.Uint16(rawdata[i*2:]))
-		mapd.Param1[i] = int(rawdata[(4096*2)+i])
-		mapd.Param2[i] = int(rawdata[(4096*3)+i])
+		mapblock.ContentId[i] = int(binary.BigEndian.Uint16(rawdata[i*2:]))
+		mapblock.Param1[i] = int(rawdata[(4096*2)+i])
+		mapblock.Param2[i] = int(rawdata[(4096*3)+i])
 	}
 
 	return nil
