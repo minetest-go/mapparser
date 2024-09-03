@@ -1,9 +1,7 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/klauspost/compress v1.16.0 h1:iULayQNOReoYUe+1qtKOqw9CwJv3aNQu8ivo7lw1HU4=
-github.com/klauspost/compress v1.16.0/go.mod h1:ntbaceVETuRiXiv4DpjP66DpAtAGkEQskQzEyD//IeE=
-github.com/minetest-go/types v1.0.2 h1:lHU9frnlgtWO3XFIVxO5X3Gi+y07gV+guREglqnwDJM=
-github.com/minetest-go/types v1.0.2/go.mod h1:QS2q8tKAiuBe2Rin880ARFt9VokYIJNZV4Z4kHAChU0=
+github.com/klauspost/compress v1.17.9 h1:6KIumPrER1LHsvBVuDa0r5xaG0Es51mhhB9BQB2qeMA=
+github.com/klauspost/compress v1.17.9/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
 github.com/minetest-go/types v1.0.4 h1:SuM1UPXM2ocngJqZwlxZjnQVJEFxeMyk4bqlEw1BAj4=
 github.com/minetest-go/types v1.0.4/go.mod h1:QS2q8tKAiuBe2Rin880ARFt9VokYIJNZV4Z4kHAChU0=
 github.com/minetest-go/types v1.0.7 h1:McQVnHQysqXegJbHnVl66TOS/172yi5b70sosWRCvuk=
